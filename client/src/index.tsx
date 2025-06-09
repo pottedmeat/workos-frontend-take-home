@@ -1,27 +1,23 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { Container, Tabs, Theme } from "@radix-ui/themes";
+import { Container, Theme } from '@radix-ui/themes';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import ReactDOM from 'react-dom/client';
+import { Directory } from './components/Directory';
 
-import "@radix-ui/themes/styles.css";
+import '@radix-ui/themes/styles.css';
+
+const queryClient = new QueryClient()
 
 export default function App() {
     return (
-        <Theme>
-            <Container size="3" my="7" mx="8px">
-                <Tabs.Root defaultValue="users" mx="15px" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
-                    <Tabs.List>
-                        <Tabs.Trigger value="users">Users</Tabs.Trigger>
-                        <Tabs.Trigger value="roles">Roles</Tabs.Trigger>
-                    </Tabs.List>
-                    <Tabs.Content value="users">
-                        <p>Users</p>
-                    </Tabs.Content>
-                    <Tabs.Content value="roles">
-                        <p>Roles</p>
-                    </Tabs.Content>
-                </Tabs.Root>
-            </Container>
-        </Theme>
+        <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools />
+            <Theme>
+                <Container size="3" my="7" mx="8px">
+                    <Directory />
+                </Container>
+            </Theme>
+        </QueryClientProvider>
     )
 }
 
