@@ -9,6 +9,14 @@ export function listUsersOptions(page = 1) {
     });
 }
 
+export function searchUsersOptions(search: string, page = 1) {
+    return queryOptions({
+        queryKey: ['users', { search, page }],
+        queryFn: fetchUsers,
+        staleTime: 5e3,
+    });
+}
+
 export function listRolesOptions(page = 1) {
     return queryOptions({
         queryKey: ['roles', { page }],

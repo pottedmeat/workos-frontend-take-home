@@ -1,6 +1,8 @@
 import { Table } from '@radix-ui/themes';
 import { useDirectory } from '../hooks/useDirectory';
 import { UserRow } from './rows/UserRow';
+import placeholder from '../api/placeholder';
+import { EmptyRow } from './rows/EmptyRow';
 
 interface DirectoryTableProps {
   userOrRole: 'user' | 'role';
@@ -22,14 +24,21 @@ export function DirectoryTable({ userOrRole, pageNumber = 1, search }: Directory
           <Table.ColumnHeaderCell>Joined</Table.ColumnHeaderCell>
         </Table.Row>
       </Table.Header>
-        {directory.userOrRole === 'user' ? (
-          directory.page?.data.map((user) => (
-            <UserRow key={user.id} user={user} />
-          ))
-        ) : undefined}
       <Table.Body>
+        {directory.isPending ? (
+          <>
+            <UserRow key="skeleton" user={placeholder} skeleton />
+            {Array(9).fill(null).map((_, i) => <EmptyRow key={i} columns={3} />)}
+          </>
+        ) : directory.userOrRole === 'user' ? (
+          <>
+            {directory.page?.data.map((user) => (
+              <UserRow key={user.id} user={user} />
+            ))}
+            {Array(10 - (directory.page?.data?.length ?? 0)).fill(null).map((_, i) => <EmptyRow key={i} columns={3} />)}
+          </>
+        ) : undefined}
       </Table.Body>
     </Table.Root>
-
   );
 }

@@ -2,6 +2,10 @@ export interface Paged {
     page?: number;
 }
 
+export interface Search {
+    search: string;
+}
+
 export interface ById {
     id: string;
 }

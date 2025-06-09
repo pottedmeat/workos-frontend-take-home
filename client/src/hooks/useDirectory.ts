@@ -1,6 +1,6 @@
 import { useQueries } from "@tanstack/react-query";
-import { listUsersOptions, listRolesOptions, getRoleOptions } from "../api/options";
-import type { Page, Role, User, UserWithRole } from "../types";
+import { listUsersOptions, listRolesOptions, getRoleOptions, searchUsersOptions } from "../api/options";
+import type { Page, Role, UserWithRole } from "../types";
 import { useMemo } from "react";
 
 export type UseDirectoryResult = {
@@ -17,7 +17,7 @@ export type UseDirectoryResult = {
 
 export type UserOrRole = 'user' | 'role';
 
-export function useDirectory<UR extends UserOrRole>(userOrRole: UR, { pageNumber }: { pageNumber?: number, search?: string }): UseDirectoryResult {
+export function useDirectory<UR extends UserOrRole>(userOrRole: UR, { pageNumber, search }: { pageNumber?: number, search?: string }): UseDirectoryResult {
     const rolePage = userOrRole === 'user' ? 1 : pageNumber;
     const userPage = userOrRole === 'user' ? pageNumber : null;
     const [
@@ -28,7 +28,7 @@ export function useDirectory<UR extends UserOrRole>(userOrRole: UR, { pageNumber
             // Load roles in either case (pre-fetching page 1 roles for users)
             listRolesOptions(rolePage),
             // Load users page if being requested
-            ...(userPage !== null ? [listUsersOptions(pageNumber)] : [])
+            ...(userPage !== null ? [search ? searchUsersOptions(search, pageNumber) : listUsersOptions(pageNumber)] : [])
         ] as [ReturnType<typeof listRolesOptions>, ReturnType<typeof listUsersOptions>]
     });
 
