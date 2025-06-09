@@ -33,7 +33,10 @@ export async function getRole({ queryKey }: { queryKey: [string, ById] }) {
 /**
  * Barebones type guard for paged data
  */
-function isPage<R extends User | Role>(response: Record<string, unknown>): response is Page<R> {
+function isPage<R extends User | Role>(response: object | null): response is Page<R> {
+    if (!response) {
+        return false;
+    }
     return 'pages' in response && 'data' in response;
 }
 

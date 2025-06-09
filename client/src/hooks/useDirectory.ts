@@ -1,13 +1,25 @@
 import { useQueries } from "@tanstack/react-query";
 import { listUsersOptions, listRolesOptions, getRoleOptions } from "../api/options";
-import type { Page, Role, User } from "../types";
+import type { Page, Role, User, UserWithRole } from "../types";
 import { useMemo } from "react";
 
-export function useDirectory(userOrRole: 'user', page?: number): Page<User>;
-export function useDirectory(userOrRole: 'role', page?: number): Page<Role>;
-export function useDirectory(userOrRole: 'user' | 'role', page = 1): Page<User> | Page<Role> {
-    const rolePage = userOrRole === 'user' ? 1 : page;
-    const userPage = userOrRole === 'user' ? page : null;
+export type UseDirectoryResult = {
+    userOrRole: 'user';
+    isPending: boolean;
+    isFetched: boolean;
+    page?: Page<UserWithRole>;
+} | {
+    userOrRole: 'role';
+    isPending: boolean;
+    isFetched: boolean;
+    page?: Page<Role>;
+}
+
+export type UserOrRole = 'user' | 'role';
+
+export function useDirectory<UR extends UserOrRole>(userOrRole: UR, { pageNumber }: { pageNumber?: number, search?: string }): UseDirectoryResult {
+    const rolePage = userOrRole === 'user' ? 1 : pageNumber;
+    const userPage = userOrRole === 'user' ? pageNumber : null;
     const [
         { isPending: isRolesPending, isFetched: isRolesFetched, data: rolesPage },
         { isPending: isUsersPending, isFetched: isUsersFetched, data: usersPage } = {}
@@ -16,8 +28,8 @@ export function useDirectory(userOrRole: 'user' | 'role', page = 1): Page<User> 
             // Load roles in either case (pre-fetching page 1 roles for users)
             listRolesOptions(rolePage),
             // Load users page if being requested
-            ...(userPage !== null ? [listUsersOptions(page)] : [])
-        ]
+            ...(userPage !== null ? [listUsersOptions(pageNumber)] : [])
+        ] as [ReturnType<typeof listRolesOptions>, ReturnType<typeof listUsersOptions>]
     });
 
     // Fetch any role IDs not found on the first user page (if requested)
@@ -47,13 +59,23 @@ export function useDirectory(userOrRole: 'user' | 'role', page = 1): Page<User> 
                     ...user,
                     role: rolesPage!.data.find((role) => role.id === user.roleId)
                 }))
-            } as Page<User>
+            } as Page<UserWithRole>
         }
-        return {} as Page<User>;
+        return undefined;
     }, [usersPage, rolesPage, missingRoles]);
 
     if (userOrRole === 'user') {
-        return usersPageWithRoles;
+        return {
+            userOrRole,
+            isPending: isUsersPending || isRolesPending || isMissingRolesPending,
+            isFetched: Boolean(isUsersFetched) && isRolesFetched && isMissingRolesFetched,
+            page: usersPageWithRoles
+        };
     }
-    return rolesPage!;
+    return {
+        userOrRole,
+        isPending: isRolesPending,
+        isFetched: isRolesFetched,
+        page: rolesPage as Page<Role>
+    };
 }
