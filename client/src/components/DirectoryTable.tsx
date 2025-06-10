@@ -101,7 +101,8 @@ export function DirectoryTable({ userOrRole, search }: DirectoryTableProps) {
         <Table.Body>
           {directory.isPending ? (
             <>
-              <UserRow key="skeleton" user={placeholder} skeleton />
+              {directory.userOrRole === 'user' && <UserRow key="skeleton" user={placeholder} skeleton />}
+              {directory.userOrRole === 'role' && <RoleRow key="skeleton" role={placeholder.role} skeleton />}
               {Array(9).fill(null).map((_, i) => <EmptyRow key={i} columns={4} />)}
             </>
           ) : directory.userOrRole === 'user' ? (
