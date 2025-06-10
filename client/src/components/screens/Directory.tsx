@@ -40,18 +40,20 @@ export function Directory() {
                 </TextField.Slot>
             </TextField.Root>
             <Tabs.Content value="users">
-                {search ? (
+                <div hidden={!search}>
                     <DirectoryTable userOrRole="user" search={search} />
-                ) : (
+                </div>
+                <div hidden={!!search}>
                     <DirectoryTable userOrRole="user" />
-                )}
+                </div>
             </Tabs.Content>
             <Tabs.Content value="roles">
-                {search ? (
+                <div hidden={!search}>
                     <DirectoryTable userOrRole="role" search={search} />
-                ) : (
+                </div>
+                <div hidden={!!search}>
                     <DirectoryTable userOrRole="role" />
-                )}
+                </div>
             </Tabs.Content>
         </Tabs.Root>
     )
