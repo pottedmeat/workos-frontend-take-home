@@ -1,3 +1,30 @@
+# Completed Assignment
+
+- All tasks have been completed
+- Client implemented in a simple Vite project
+- Styling
+  - Components implemented in Radix UI
+  - All attempts have been made to be completely faithful to the Figma with the exception of the `...` dropdowns which have excess margins I found difficult to alter.
+  - A CSS reset was used (I didn't find a Radix UI version)
+- API interaction was implemented with [TanStack Query](https://tanstack.com/query/v5) which conveys the following benefits:
+  - Failed calls are retried
+  - Mutations (delete user, rename role) are optimistically updated in the UI followed by a page refresh on both success and error, potentially restoring the change if it fails
+  - Results are cached and refreshed
+- Loading
+  - A single-row skeleton is used during loading
+  - A minimum of 10 rows is always rendered to prevent page jumping
+  - The first page of roles is preloaded to attempt to minimize queries and is reused by the Roles tab
+- Accessibility
+  - Tab/keyboard usage is well-supported by Radix UI and works as expected in my testing
+  - Added aria-label properties where additional context appeared necessary but did not test on a screen reader
+
+## Improvements
+
+- Optimistic UI updates are done through a single mutation object
+  - Either block further mutations until processing is complete or alter the underlying cached data
+- Errors are exposed in code but not shown to the user
+  - A combination of Toast notifications and flags on problem rows would likely be a good approach
+
 # Frontend Take-Home Assignment
 
 Welcome to the WorkOS Frontend Take-Home Assignment!
@@ -60,13 +87,13 @@ You can run backend tests by executing `npm run test` in the `server` directory.
 
 Work on the following tasks in this order. If you can’t complete all tasks, focus on quality rather than quantity.
 
-1. Setup the "Users" and "Roles" tab structure
-2. Add the users table
-3. Add support for filtering the users table via the "Search" input field
-4. Add support for deleting a user via the "more" icon button dropdown menu
-5. Add support for viewing all roles in the "Roles" tab
-6. Add support for renaming a role in the "Roles" tab
-7. [Bonus] Add pagination to the user table
+- [x] Setup the "Users" and "Roles" tab structure
+- [x] Add the users table
+- [x] Add support for filtering the users table via the "Search" input field
+- [x] Add support for deleting a user via the "more" icon button dropdown menu
+- [x] Add support for viewing all roles in the "Roles" tab
+- [x] Add support for renaming a role in the "Roles" tab
+- [x] [Bonus] Add pagination to the user table
 
 ## Evaluation Criteria
 
