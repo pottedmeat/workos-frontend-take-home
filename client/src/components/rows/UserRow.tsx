@@ -2,7 +2,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { AlertDialog, Avatar, Button, DropdownMenu, Flex, IconButton, Skeleton, Strong, Table } from "@radix-ui/themes";
 import { AlertDialog as AlertDialogPrimitive } from "radix-ui";
 import React, { useCallback, useState } from "react";
-import styled from "styled-components";
+import { StyledCell } from "../../styles";
 import { formatDate } from "../../utils/date";
 
 import type { UserWithRole } from "../../types";
@@ -12,12 +12,6 @@ export interface UserRowProps {
     skeleton?: boolean;
     onDelete?: (userId: string) => void;
 }
-
-const StyledCell = styled(Table.Cell)`
-    padding: 0 var(--space-3);
-    height: 44px;
-    vertical-align: middle;
-`;
 
 export function UserRow({ user, skeleton, onDelete }: UserRowProps) {
     const [showVerifyDelete, setShowVerifyDelete] = useState(false);
@@ -33,7 +27,7 @@ export function UserRow({ user, skeleton, onDelete }: UserRowProps) {
     const MaybeSkeleton = skeleton ? Skeleton : React.Fragment;
     return (
         <Table.Row>
-            <StyledCell><Flex gap="2"><MaybeSkeleton><Avatar src={user.photo} fallback="A" radius="full" size="1" /></MaybeSkeleton> <MaybeSkeleton><span>{user.first} {user.last}</span></MaybeSkeleton></Flex></StyledCell>
+            <StyledCell><Flex gap="2"><MaybeSkeleton><Avatar src={user.photo} fallback={`${user.first.charAt(0)}${user.last.charAt(0)}`} radius="full" size="1" /></MaybeSkeleton> <MaybeSkeleton><span>{user.first} {user.last}</span></MaybeSkeleton></Flex></StyledCell>
             <StyledCell><MaybeSkeleton>{user.role.name}</MaybeSkeleton></StyledCell>
             <StyledCell><MaybeSkeleton>{formatDate(user.createdAt)}</MaybeSkeleton></StyledCell>
             <StyledCell><Flex justify="end">
@@ -42,6 +36,7 @@ export function UserRow({ user, skeleton, onDelete }: UserRowProps) {
                         <IconButton variant="ghost" radius="full" color="gray" size="1" disabled={skeleton}><DotsHorizontalIcon width="16" height="16" /></IconButton>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Content>
+                        {/* Leave edit in the dropdown for now to see keyboard navigation */}
                         <DropdownMenu.Item>Edit user</DropdownMenu.Item>
                         <DropdownMenu.Item onSelect={handleDelete}>Delete user</DropdownMenu.Item>
                     </DropdownMenu.Content>

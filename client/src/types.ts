@@ -19,7 +19,7 @@ export interface User {
     first: string;
     last: string;
     roleId: string;
-    photo: string;
+    photo?: string;
 }
 
 export interface UserWithRole extends User {
@@ -31,8 +31,8 @@ export interface Role {
     createdAt: Date;
     updatedAt: Date;
     name: string;
+    description?: string;
     isDefault: boolean;
-    description: string;
 }
 
 export interface Page<R extends User | Role> {

@@ -20,13 +20,17 @@ export async function fetchUsers({ queryKey }: { queryKey: [string, Paged & Part
     return result;
 }
 
-export async function fetchRoles({ queryKey }: { queryKey: [string, Paged] }) {
-    const [, { page = 1 }] = queryKey;
+export async function fetchRoles({ queryKey }: { queryKey: [string, Paged & Partial<Search>] }) {
+    const [, { page = 1, search }] = queryKey;
 
-    const response = await fetch(`${apiUrl}/roles?page=${page}`);
+    const response = await fetch(`${apiUrl}/roles?page=${page}` + (search ? `&search=${search}` : ''));
     const result = await response.json();
     if (!isPage<Role>(result)) {
         throw new Error('Invalid paged roles response from API');
+    }
+    for (const role of result.data) {
+        role.createdAt = new Date(role.createdAt);
+        role.updatedAt = new Date(role.updatedAt);
     }
     return result;
 }

@@ -32,3 +32,11 @@ export function getRoleOptions(id: string) {
         staleTime: 5e3,
     });
 }
+
+export function searchRolesOptions(search: string, page = 1) {
+    return queryOptions({
+        queryKey: ['roles', { search, page }],
+        queryFn: fetchRoles,
+        staleTime: 5e3,
+    });
+}
