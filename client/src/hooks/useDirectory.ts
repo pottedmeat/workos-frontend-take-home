@@ -26,9 +26,9 @@ export function useDirectory<UR extends UserOrRole>(userOrRole: UR, { pageNumber
     ] = useQueries({
         queries: [
             // Load roles in either case (pre-fetching page 1 roles for users)
-            search ? searchRolesOptions(search, rolePage) : listRolesOptions(rolePage),
+            (userOrRole === 'role' && search) ? searchRolesOptions(search, rolePage) : listRolesOptions(rolePage),
             // Load users page if being requested
-            ...(userPage !== null ? [search ? searchUsersOptions(search, pageNumber) : listUsersOptions(pageNumber)] : [])
+            ...(userPage !== null ? [(userOrRole === 'user' && search) ? searchUsersOptions(search, pageNumber) : listUsersOptions(pageNumber)] : [])
         ] as [ReturnType<typeof listRolesOptions>, ReturnType<typeof listUsersOptions>]
     });
 
@@ -63,7 +63,7 @@ export function useDirectory<UR extends UserOrRole>(userOrRole: UR, { pageNumber
         }
         return undefined;
     }, [usersPage, rolesPage, missingRoles]);
-
+    
     if (userOrRole === 'user') {
         return {
             userOrRole,
