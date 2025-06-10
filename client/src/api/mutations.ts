@@ -8,3 +8,13 @@ export function deleteUser(id: string) {
         method: 'DELETE',
     });
 }
+
+export function renameRole(id: string, name: string) {
+    return fetch(`${apiUrl}/roles/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+    });
+}

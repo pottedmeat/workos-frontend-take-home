@@ -1,21 +1,30 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { DropdownMenu, Flex, IconButton, Skeleton, Table } from "@radix-ui/themes";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { StyledCell } from "../../styles";
 import { formatDate } from "../../utils/date";
 
 import type { Role } from "../../types";
+import { RenameRoleDialog } from "../input/RenameRoleDialog";
 
 export interface RoleRowProps {
     role: Role;
     skeleton?: boolean;
-    onRename?: (roleId: string) => void;
+    onRename?: (roleId: string, newName: string) => void;
 }
 
 export function RoleRow({ role, skeleton, onRename }: RoleRowProps) {
+    const [showRenameDialog, setShowRenameDialog] = useState(false);
+    const [newRoleName, setNewRoleName] = useState("");
+
     const handleRename = useCallback(() => {
-        onRename?.(role.id);
-    }, [onRename, role.id]);
+        setNewRoleName(role.name);
+        setShowRenameDialog(true);
+    }, [role.name]);
+
+    const handleConfirmRename = useCallback(() => {
+        onRename?.(role.id, newRoleName);
+    }, [onRename, role.id, newRoleName]);
 
     const MaybeSkeleton = skeleton ? Skeleton : React.Fragment;
     return (
@@ -32,6 +41,14 @@ export function RoleRow({ role, skeleton, onRename }: RoleRowProps) {
                         <DropdownMenu.Item onSelect={handleRename}>Rename role</DropdownMenu.Item>
                     </DropdownMenu.Content>
                 </DropdownMenu.Root>
+                <RenameRoleDialog
+                    open={showRenameDialog}
+                    onOpenChange={setShowRenameDialog}
+                    onRename={handleConfirmRename}
+                    roleName={role.name}
+                    newRoleName={newRoleName}
+                    onNewRoleNameChange={setNewRoleName}
+                />
             </Flex></StyledCell>
         </Table.Row>
     );

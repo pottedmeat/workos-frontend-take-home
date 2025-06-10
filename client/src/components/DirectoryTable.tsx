@@ -3,10 +3,10 @@ import { useDirectory } from '../hooks/useDirectory';
 import { UserRow } from './rows/UserRow';
 import placeholder from '../api/placeholder';
 import { EmptyRow } from './rows/EmptyRow';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteUser } from '../api/mutations';
-import { listUsersOptions } from '../api/options';
+import { deleteUser, renameRole } from '../api/mutations';
+import { listUsersOptions, listRolesOptions } from '../api/options';
 import { RoleRow } from './rows/RoleRow';
 
 interface DirectoryTableProps {
@@ -24,15 +24,40 @@ export function DirectoryTable({ userOrRole, pageNumber = 1, search }: Directory
       queryClient.invalidateQueries({ queryKey: listUsersOptions().queryKey });
     }
   });
+
+  const renameRoleMutation = useMutation({
+    mutationFn: (variables: { id: string, name: string }) => renameRole(variables.id, variables.name),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: listRolesOptions().queryKey });
+    }
+  });
+
   const usersPage = directory.userOrRole === 'user' ? directory.page?.data?.filter((user) => deleteUserMutation.error || user.id !== deleteUserMutation.variables) : undefined;
-  const rolesPage = directory.userOrRole === 'role' ? directory.page?.data : undefined;
+  const rolesPage = useMemo(() => {
+    if (directory.userOrRole !== 'role' || !directory.page?.data) {
+      return undefined;
+    }
+    return directory.page.data.map((role) => {
+      if (role.id === renameRoleMutation.variables?.id) {
+        return {
+          ...role,
+          name: renameRoleMutation.variables.name
+        };
+      }
+      return role;
+    });
+  }, [directory.userOrRole, directory.page?.data, renameRoleMutation.variables]);
   
   // TODO: Deal with stacked deletes while deleteUserMutation.isPending
   // TODO: Error handling can be shown when deleteUserMutation.error is not undefined
 
   const handleDeleteUser = useCallback((userId: string) => {
     deleteUserMutation.mutate(userId);
-  }, []);
+  }, [deleteUserMutation]);
+
+  const handleRenameRole = useCallback((roleId: string, newName: string) => {
+    renameRoleMutation.mutate({ id: roleId, name: newName });
+  }, [renameRoleMutation]);
 
   console.log(deleteUserMutation);
 
@@ -74,7 +99,7 @@ export function DirectoryTable({ userOrRole, pageNumber = 1, search }: Directory
           ) : directory.userOrRole === 'role' ? (
             <>
               {rolesPage?.map((role) => (
-                <RoleRow key={role.id} role={role} />
+                <RoleRow key={role.id} role={role} onRename={handleRenameRole} />
               ))}
               {Array(10 - (rolesPage?.length ?? 0)).fill(null).map((_, i) => <EmptyRow key={i} columns={4} />)}
             </>
