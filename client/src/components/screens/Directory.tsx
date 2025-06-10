@@ -41,16 +41,16 @@ export function Directory() {
             </TextField.Root>
             <Tabs.Content value="users">
                 {search ? (
-                    <DirectoryTable userOrRole="user" pageNumber={1} search={search} />
+                    <DirectoryTable userOrRole="user" search={search} />
                 ) : (
-                    <DirectoryTable userOrRole="user" pageNumber={1} />
+                    <DirectoryTable userOrRole="user" />
                 )}
             </Tabs.Content>
             <Tabs.Content value="roles">
                 {search ? (
-                    <DirectoryTable userOrRole="role" pageNumber={1} search={search} />
+                    <DirectoryTable userOrRole="role" search={search} />
                 ) : (
-                    <DirectoryTable userOrRole="role" pageNumber={1} />
+                    <DirectoryTable userOrRole="role" />
                 )}
             </Tabs.Content>
         </Tabs.Root>

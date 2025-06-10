@@ -3,20 +3,26 @@ import { useDirectory } from '../hooks/useDirectory';
 import { UserRow } from './rows/UserRow';
 import placeholder from '../api/placeholder';
 import { EmptyRow } from './rows/EmptyRow';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteUser, renameRole } from '../api/mutations';
 import { listUsersOptions, listRolesOptions } from '../api/options';
 import { RoleRow } from './rows/RoleRow';
+import { PaginationRow } from './rows/PaginationRow';
 
 interface DirectoryTableProps {
   userOrRole: 'user' | 'role';
-  pageNumber?: number;
   search?: string;
 }
 
-export function DirectoryTable({ userOrRole, pageNumber = 1, search }: DirectoryTableProps) {
+export function DirectoryTable({ userOrRole, search }: DirectoryTableProps) {
+  const [pageNumber, setPageNumber] = useState(1);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setPageNumber(1);
+  }, [search]);
+
   const directory = useDirectory(userOrRole, { pageNumber, search });
   const deleteUserMutation = useMutation({
     mutationFn: deleteUser,
@@ -58,6 +64,17 @@ export function DirectoryTable({ userOrRole, pageNumber = 1, search }: Directory
   const handleRenameRole = useCallback((roleId: string, newName: string) => {
     renameRoleMutation.mutate({ id: roleId, name: newName });
   }, [renameRoleMutation]);
+
+  const handleNext = useCallback(() => {
+    setPageNumber((page) => page + 1);
+  }, []);
+
+  const handlePrevious = useCallback(() => {
+    setPageNumber((page) => page - 1);
+  }, []);
+
+  const isPreviousDisabled = pageNumber === 1;
+  const isNextDisabled = directory.page?.next === null || directory.isPending;
 
   return (
     <>
@@ -102,6 +119,13 @@ export function DirectoryTable({ userOrRole, pageNumber = 1, search }: Directory
               {Array(10 - (rolesPage?.length ?? 0)).fill(null).map((_, i) => <EmptyRow key={i} columns={4} />)}
             </>
           ) : undefined}
+          <PaginationRow
+            columns={4}
+            onNext={handleNext}
+            onPrevious={handlePrevious}
+            isNextDisabled={isNextDisabled}
+            isPreviousDisabled={isPreviousDisabled}
+          />
         </Table.Body>
       </Table.Root>
     </>
