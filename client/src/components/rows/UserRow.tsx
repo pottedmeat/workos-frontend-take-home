@@ -1,11 +1,11 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { AlertDialog, Avatar, Button, DropdownMenu, Flex, IconButton, Skeleton, Strong, Table } from "@radix-ui/themes";
-import { AlertDialog as AlertDialogPrimitive } from "radix-ui";
+import { Avatar, DropdownMenu, Flex, IconButton, Skeleton, Table } from "@radix-ui/themes";
 import React, { useCallback, useState } from "react";
 import { StyledCell } from "../../styles";
 import { formatDate } from "../../utils/date";
 
 import type { UserWithRole } from "../../types";
+import { DeleteUserDialog } from "../input/DeleteUserDialog";
 
 export interface UserRowProps {
     user: UserWithRole;
@@ -41,30 +41,12 @@ export function UserRow({ user, skeleton, onDelete }: UserRowProps) {
                         <DropdownMenu.Item onSelect={handleDelete}>Delete user</DropdownMenu.Item>
                     </DropdownMenu.Content>
                 </DropdownMenu.Root>
-                <AlertDialog.Root open={showVerifyDelete} onOpenChange={setShowVerifyDelete}>
-                    <AlertDialogPrimitive.Portal>
-                        <AlertDialogPrimitive.Overlay />
-                        <AlertDialog.Content maxWidth="488px">
-                            <AlertDialog.Title>Revoke access</AlertDialog.Title>
-                            <AlertDialog.Description size="2">
-                                Are you sure? The user <Strong>{user.first} {user.last}</Strong> will be permanently deleted.
-                            </AlertDialog.Description>
-
-                            <Flex gap="3" mt="4" justify="end">
-                                <AlertDialog.Cancel>
-                                    <Button variant="surface" color="gray">
-                                        <Strong>Cancel</Strong>
-                                    </Button>
-                                </AlertDialog.Cancel>
-                                <AlertDialog.Action>
-                                    <Button variant="surface" color="red" onClick={handleConfirmDelete}>
-                                        <Strong>Delete user</Strong>                                        
-                                    </Button>
-                                </AlertDialog.Action>
-                            </Flex>
-                        </AlertDialog.Content>
-                    </AlertDialogPrimitive.Portal>
-                </AlertDialog.Root>
+                <DeleteUserDialog
+                    open={showVerifyDelete}
+                    onOpenChange={setShowVerifyDelete}
+                    onConfirm={handleConfirmDelete}
+                    userName={`${user.first} ${user.last}`}
+                />
             </Flex></StyledCell>
         </Table.Row>
     );

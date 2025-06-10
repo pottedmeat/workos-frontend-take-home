@@ -59,8 +59,6 @@ export function DirectoryTable({ userOrRole, pageNumber = 1, search }: Directory
     renameRoleMutation.mutate({ id: roleId, name: newName });
   }, [renameRoleMutation]);
 
-  console.log(deleteUserMutation);
-
   return (
     <>
       <Table.Root variant="surface" layout="fixed">
