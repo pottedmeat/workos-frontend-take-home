@@ -1,5 +1,10 @@
 import type { ById, Page, Paged, Role, Search, User } from "../types";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+if (!apiUrl) {
+    throw new Error('VITE_API_URL environment variable is not set');
+}
+
 export async function fetchUsers({ queryKey }: { queryKey: [string, Paged & Partial<Search>] }) {
     const [, { page = 1, search }] = queryKey;
 
@@ -41,9 +46,4 @@ function isPage<R extends User | Role>(response: object | null): response is Pag
         return false;
     }
     return 'pages' in response && 'data' in response;
-}
-
-const apiUrl = import.meta.env.VITE_API_URL;
-if (!apiUrl) {
-    throw new Error('VITE_API_URL environment variable is not set');
 }

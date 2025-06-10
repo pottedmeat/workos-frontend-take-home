@@ -6,7 +6,7 @@ import { Directory } from './components/screens/Directory';
 
 import '@radix-ui/themes/styles.css';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 export default function App() {
     return (
