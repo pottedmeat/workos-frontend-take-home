@@ -11,7 +11,7 @@ export function DeleteUserDialog({ open, onOpenChange, onConfirm, userName }: De
     return (
         <AlertDialog.Root open={open} onOpenChange={onOpenChange}>
             <AlertDialog.Content maxWidth="488px">
-                <AlertDialog.Title>Revoke access</AlertDialog.Title>
+                <AlertDialog.Title>Delete user</AlertDialog.Title>
                 <AlertDialog.Description size="2">
                     Are you sure? The user <Strong>{userName}</Strong> will be permanently deleted.
                 </AlertDialog.Description>

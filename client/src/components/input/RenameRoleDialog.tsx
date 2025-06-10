@@ -47,7 +47,7 @@ export function RenameRoleDialog({
                         </Dialog.Close>
                         <Dialog.Close>
                             <Button variant="surface" type="submit">
-                                Rename
+                                Rename role
                             </Button>
                         </Dialog.Close>
                     </Flex>
