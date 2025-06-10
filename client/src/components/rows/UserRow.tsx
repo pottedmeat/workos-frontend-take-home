@@ -33,7 +33,7 @@ export function UserRow({ user, skeleton, onDelete }: UserRowProps) {
             <StyledCell><Flex justify="end">
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger disabled={skeleton}>
-                        <IconButton variant="ghost" radius="full" color="gray" size="1" disabled={skeleton}><DotsHorizontalIcon width="16" height="16" /></IconButton>
+                        <IconButton variant="ghost" radius="full" color="gray" size="1" disabled={skeleton} aria-label={`Options for ${user.first} ${user.last}`}><DotsHorizontalIcon width="16" height="16" /></IconButton>
                     </DropdownMenu.Trigger>
                     <DropdownMenu.Content>
                         {/* Leave edit in the dropdown for now to see keyboard navigation */}

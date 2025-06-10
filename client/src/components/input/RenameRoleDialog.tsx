@@ -36,6 +36,7 @@ export function RenameRoleDialog({
                         value={newRoleName}
                         onChange={(e) => onNewRoleNameChange(e.target.value)}
                         mt="4"
+                        aria-label="New role name"
                     />
 
                     <Flex gap="3" mt="4" justify="end">
