@@ -4,13 +4,18 @@
 
 1. **Start the Backend API**:
    - Follow the [instructions below](#getting-started).
-2. **Run the Client**:
+2. **Set Environment Variables**:
+   - `cp client/.env.example client/.env`
+   - Ensure the URL in the file matches that returned by the backend API.
+3. **Run the Client**:
    - Run the following commands to install dependencies and start the server:
      ```bash
      cd client
      npm install
      npm run dev
      ```
+4. **View in Browser**:
+   - Open the link displayed by Vite in your browser.
 
 ## Progress
 
