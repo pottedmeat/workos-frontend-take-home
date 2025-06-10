@@ -1,5 +1,19 @@
 # Completed Assignment
 
+## Running the Client
+
+1. **Start the Backend API**:
+   - Follow the [instructions below](#getting-started).
+2. **Run the Client**:
+   - Run the following commands to install dependencies and start the server:
+     ```bash
+     cd client
+     npm install
+     npm run dev
+     ```
+
+## Progress
+
 - All tasks have been completed
 - Client implemented in a simple Vite project
 - Styling
