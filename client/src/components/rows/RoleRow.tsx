@@ -10,21 +10,14 @@ import { RenameRoleDialog } from "../input/RenameRoleDialog";
 export interface RoleRowProps {
     role: Role;
     skeleton?: boolean;
-    onRename?: (roleId: string, newName: string) => void;
 }
 
-export function RoleRow({ role, skeleton, onRename }: RoleRowProps) {
+export function RoleRow({ role, skeleton }: RoleRowProps) {
     const [showRenameDialog, setShowRenameDialog] = useState(false);
-    const [newRoleName, setNewRoleName] = useState("");
 
     const handleRename = useCallback(() => {
-        setNewRoleName(role.name);
         setShowRenameDialog(true);
-    }, [role.name]);
-
-    const handleConfirmRename = useCallback(() => {
-        onRename?.(role.id, newRoleName);
-    }, [onRename, role.id, newRoleName]);
+    }, [setShowRenameDialog]);
 
     const MaybeSkeleton = skeleton ? Skeleton : React.Fragment;
     return (
@@ -44,10 +37,7 @@ export function RoleRow({ role, skeleton, onRename }: RoleRowProps) {
                 <RenameRoleDialog
                     open={showRenameDialog}
                     onOpenChange={setShowRenameDialog}
-                    onRename={handleConfirmRename}
-                    roleName={role.name}
-                    newRoleName={newRoleName}
-                    onNewRoleNameChange={setNewRoleName}
+                    role={role}
                 />
             </Flex></StyledCell>
         </Table.Row>

@@ -34,6 +34,7 @@ export interface Role {
     name: string;
     description?: string;
     isDefault: boolean;
+    page?: number;
 }
 
 export interface Page<R extends User | Role> {

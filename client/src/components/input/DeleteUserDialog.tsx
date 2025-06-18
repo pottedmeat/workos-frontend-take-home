@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { deleteUser } from "../../api/mutations";
 import type { Paged, UserWithRole } from "../../types";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { listUsersOptions } from "../../api/options";
 
 interface DeleteUserDialogProps {
     open: boolean;
@@ -18,13 +19,14 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
     const deleteUserMutation = useMutation({
         mutationFn: deleteUser,
         onSuccess: async () => {
-            return queryClient.refetchQueries({
+            queryClient.invalidateQueries({
                 type: 'all',
                 predicate: ({ queryKey }) => {
                     const [userOrRole, { page = 1 }] = queryKey as [string, Paged];
                     return userOrRole === 'users' && page >= user.page;
                 }
             });
+            return queryClient.refetchQueries({ queryKey: listUsersOptions(user.page).queryKey });
         },
     });
 
@@ -33,31 +35,31 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
         deleteUserMutation.mutateAsync(user.id).then(() => {
             onOpenChange(false);
         });
-    }, [deleteUserMutation, user.id]);
+    }, [deleteUserMutation, user.id, onOpenChange]);
 
     return (
         <AlertDialog.Root open={open} onOpenChange={onOpenChange}>
             <AlertDialog.Content maxWidth="488px">
                 <AlertDialog.Title>Delete user</AlertDialog.Title>
+                {deleteUserMutation.error && (
+                    <Flex
+                        role="alert"
+                        align="center"
+                        gap="2"
+                        p="2"
+                        mb="3"
+                        style={{
+                            borderLeft: "4px solid var(--red-9)",
+                            backgroundColor: "var(--red-3)",
+                        }}
+                    >
+                        <ExclamationTriangleIcon color="var(--red-9)" />
+                        <Text color="red">
+                            {(deleteUserMutation.error as Error)?.message ?? "An unexpected error occurred."}
+                        </Text>
+                    </Flex>
+                )}
                 <AlertDialog.Description size="2">
-                    {deleteUserMutation.error && (
-                        <Flex
-                            role="alert"
-                            align="center"
-                            gap="2"
-                            p="2"
-                            mb="3"
-                            style={{
-                                borderLeft: "4px solid var(--red-9)",
-                                backgroundColor: "var(--red-3)",
-                            }}
-                        >
-                            <ExclamationTriangleIcon color="var(--red-9)" />
-                            <Text color="red">
-                                {(deleteUserMutation.error as Error)?.message ?? "An unexpected error occurred."}
-                            </Text>
-                        </Flex>
-                    )}
                     Are you sure? The user <Strong>{user.first} {user.last}</Strong> will be permanently deleted.
                 </AlertDialog.Description>
 
@@ -67,11 +69,9 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
                             <Strong>Cancel</Strong>
                         </Button>
                     </AlertDialog.Cancel>
-                    <AlertDialog.Action>
-                        <Button variant="surface" color="red" disabled={deleteUserMutation.isPending} onClick={handleConfirmDelete}>
-                            <Strong>{deleteUserMutation.isPending ? (<Flex direction="row" gap="2" align="center"><Spinner size="1" /> Deleting...</Flex>) : 'Delete user'}</Strong>
-                        </Button>
-                    </AlertDialog.Action>
+                    <Button variant="surface" color="red" disabled={deleteUserMutation.isPending} onClick={handleConfirmDelete}>
+                        <Strong>{deleteUserMutation.isPending ? (<Flex direction="row" gap="2" align="center"><Spinner size="1" /> Deleting...</Flex>) : 'Delete user'}</Strong>
+                    </Button>
                 </Flex>
             </AlertDialog.Content>
         </AlertDialog.Root>
