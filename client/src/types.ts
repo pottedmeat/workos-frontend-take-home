@@ -23,6 +23,7 @@ export interface User {
 }
 
 export interface UserWithRole extends User {
+    page: number;
     role: Role;
 }
 

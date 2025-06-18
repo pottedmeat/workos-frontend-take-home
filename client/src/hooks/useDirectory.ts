@@ -45,6 +45,7 @@ export function useDirectory({ pageNumber, search }: { pageNumber?: number; sear
                 ...usersPage,
                 data: usersPage!.data.map((user) => ({
                     ...user,
+                    page: pageNumber,
                     role: rolesPage!.data.find((role) => role.id === user.roleId)
                 }))
             } as Page<UserWithRole>

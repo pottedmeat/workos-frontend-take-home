@@ -2,27 +2,21 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Avatar, DropdownMenu, Flex, IconButton, Skeleton, Table } from "@radix-ui/themes";
 import React, { useCallback, useState } from "react";
 import { StyledCell } from "../../styles";
-import { formatDate } from "../../utils/date";
-
 import type { UserWithRole } from "../../types";
+import { formatDate } from "../../utils/date";
 import { DeleteUserDialog } from "../input/DeleteUserDialog";
 
 export interface UserRowProps {
     user: UserWithRole;
     skeleton?: boolean;
-    onDelete?: (userId: string) => void;
 }
 
-export function UserRow({ user, skeleton, onDelete }: UserRowProps) {
+export function UserRow({ user, skeleton }: UserRowProps) {
     const [showVerifyDelete, setShowVerifyDelete] = useState(false);
 
     const handleDelete = useCallback(() => {
         setShowVerifyDelete(true);
     }, [setShowVerifyDelete]);
-
-    const handleConfirmDelete = useCallback(() => {
-        onDelete?.(user.id);
-    }, [onDelete, user.id]);
 
     const MaybeSkeleton = skeleton ? Skeleton : React.Fragment;
     return (
@@ -44,8 +38,7 @@ export function UserRow({ user, skeleton, onDelete }: UserRowProps) {
                 <DeleteUserDialog
                     open={showVerifyDelete}
                     onOpenChange={setShowVerifyDelete}
-                    onConfirm={handleConfirmDelete}
-                    userName={`${user.first} ${user.last}`}
+                    user={user}
                 />
             </Flex></StyledCell>
         </Table.Row>
