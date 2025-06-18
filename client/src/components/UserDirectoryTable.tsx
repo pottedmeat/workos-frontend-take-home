@@ -23,7 +23,7 @@ export function UserDirectoryTable({ search }: UserDirectoryTableProps) {
   }, [search]);
 
   // Fetch the users directory data for the current page
-  const directory = useDirectory('user', { pageNumber, search });
+  const directory = useDirectory({ pageNumber, search });
 
   // Handle user deletion and automatically refetch on completion
   const deleteUserMutation = useMutation({

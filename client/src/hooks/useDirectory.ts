@@ -1,34 +1,22 @@
 import { useQueries } from "@tanstack/react-query";
-import { listUsersOptions, listRolesOptions, getRoleOptions, searchUsersOptions, searchRolesOptions } from "../api/options";
+import { listUsersOptions, listRolesOptions, getRoleOptions, searchUsersOptions } from "../api/options";
 import type { Page, Role, UserWithRole } from "../types";
 import { useMemo } from "react";
 
 export type UseDirectoryResult = {
-    userOrRole: 'user';
     isPending: boolean;
     isFetched: boolean;
     page?: Page<UserWithRole>;
-} | {
-    userOrRole: 'role';
-    isPending: boolean;
-    isFetched: boolean;
-    page?: Page<Role>;
-}
+};
 
-export type UserOrRole = 'user' | 'role';
-
-export function useDirectory<UR extends UserOrRole>(userOrRole: UR, { pageNumber, search }: { pageNumber?: number, search?: string }): UseDirectoryResult {
-    const rolePage = userOrRole === 'user' ? 1 : pageNumber;
-    const userPage = userOrRole === 'user' ? pageNumber : null;
+export function useDirectory({ pageNumber, search }: { pageNumber?: number; search?: string }): UseDirectoryResult {
     const [
         { isPending: isRolesPending, isFetched: isRolesFetched, data: rolesPage },
         { isPending: isUsersPending, isFetched: isUsersFetched, data: usersPage } = {}
     ] = useQueries({
         queries: [
-            // Load roles in either case (pre-fetching page 1 roles for users)
-            (userOrRole === 'role' && search) ? searchRolesOptions(search, rolePage) : listRolesOptions(rolePage),
-            // Load users page if being requested
-            ...(userPage !== null ? [(userOrRole === 'user' && search) ? searchUsersOptions(search, pageNumber) : listUsersOptions(pageNumber)] : [])
+            listRolesOptions(1),
+            search ? searchUsersOptions(search, pageNumber) : listUsersOptions(pageNumber)
         ] as [ReturnType<typeof listRolesOptions>, ReturnType<typeof listUsersOptions>]
     });
 
@@ -64,18 +52,9 @@ export function useDirectory<UR extends UserOrRole>(userOrRole: UR, { pageNumber
         return undefined;
     }, [usersPage, rolesPage, missingRoles]);
     
-    if (userOrRole === 'user') {
-        return {
-            userOrRole,
-            isPending: isUsersPending || isRolesPending || isMissingRolesPending,
-            isFetched: Boolean(isUsersFetched) && isRolesFetched && isMissingRolesFetched,
-            page: usersPageWithRoles
-        };
-    }
     return {
-        userOrRole,
-        isPending: isRolesPending,
-        isFetched: isRolesFetched,
-        page: rolesPage as Page<Role>
+        isPending: isUsersPending || isRolesPending || isMissingRolesPending,
+        isFetched: Boolean(isUsersFetched) && isRolesFetched && isMissingRolesFetched,
+        page: usersPageWithRoles,
     };
 }

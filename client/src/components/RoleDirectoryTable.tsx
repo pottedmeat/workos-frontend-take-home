@@ -1,8 +1,8 @@
 import { Table } from '@radix-ui/themes';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { renameRole } from '../api/mutations';
-import { listRolesOptions } from '../api/options';
+import { listRolesOptions, searchRolesOptions } from '../api/options';
 import placeholder from '../api/placeholder';
 import { useDirectory } from '../hooks/useDirectory';
 import { EmptyRow } from './rows/EmptyRow';
@@ -23,7 +23,7 @@ export function RoleDirectoryTable({ search }: RoleDirectoryTableProps) {
   }, [search]);
 
   // Fetch the roles directory data for the current page
-  const directory = useDirectory('role', { pageNumber, search });
+  const directory = useQuery(search ? searchRolesOptions(search, pageNumber) : listRolesOptions(pageNumber));
 
   // Handle role rename and automatically refetch on completion
   const renameRoleMutation = useMutation({
@@ -35,22 +35,22 @@ export function RoleDirectoryTable({ search }: RoleDirectoryTableProps) {
 
   // Locally update a role's name while the rename mutation is pending
   const rolesPage = useMemo(() => {
-    if (!directory.page?.data) return undefined;
+    if (!directory.data) return undefined;
 
-    return directory.page.data.map((role) => {
+    return directory.data.data.map((role) => {
       if (role.id === renameRoleMutation.variables?.id) {
         return { ...role, name: renameRoleMutation.variables.name };
       }
       return role;
     });
-  }, [directory.page?.data, renameRoleMutation.variables]);
+  }, [directory.data?.data, renameRoleMutation.variables]);
 
   // Pagination handlers
   const handleNext = useCallback(() => setPageNumber((page) => page + 1), []);
   const handlePrevious = useCallback(() => setPageNumber((page) => page - 1), []);
 
   const isPreviousDisabled = pageNumber === 1;
-  const isNextDisabled = directory.page?.next === null || directory.isPending;
+  const isNextDisabled = directory.data?.next === null || directory.isPending;
 
   const handleRenameRole = useCallback(
     (roleId: string, newName: string) => renameRoleMutation.mutate({ id: roleId, name: newName }),
