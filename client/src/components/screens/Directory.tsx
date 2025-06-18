@@ -1,5 +1,6 @@
 import { Tabs, TextField } from '@radix-ui/themes';
-import { DirectoryTable } from '../DirectoryTable';
+import { UserDirectoryTable } from '../UserDirectoryTable';
+import { RoleDirectoryTable } from '../RoleDirectoryTable';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -42,18 +43,18 @@ export function Directory() {
             </TextField.Root>
             <Tabs.Content value="users">
                 <div hidden={!search}>
-                    <DirectoryTable userOrRole="user" search={search} />
+                    <UserDirectoryTable search={search} />
                 </div>
                 <div hidden={!!search}>
-                    <DirectoryTable userOrRole="user" />
+                    <UserDirectoryTable />
                 </div>
             </Tabs.Content>
             <Tabs.Content value="roles">
                 <div hidden={!search}>
-                    <DirectoryTable userOrRole="role" search={search} />
+                    <RoleDirectoryTable search={search} />
                 </div>
                 <div hidden={!!search}>
-                    <DirectoryTable userOrRole="role" />
+                    <RoleDirectoryTable />
                 </div>
             </Tabs.Content>
         </Tabs.Root>
